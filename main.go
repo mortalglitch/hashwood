@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	_ "github.com/lib/pq"
+
 	md5utils "github.com/mortalglitch/hashwood/internal/md5_utils"
 )
 
