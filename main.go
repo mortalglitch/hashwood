@@ -1,23 +1,49 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
+	"os"
 
 	_ "github.com/lib/pq"
 
-	md5utils "github.com/mortalglitch/hashwood/internal/md5_utils"
+	"github.com/mortalglitch/hashwood/internal/database"
+	inputoutput "github.com/mortalglitch/hashwood/internal/input_output"
+
+	"github.com/joho/godotenv"
 )
 
-func main() {
-	fmt.Println("Starting up and checking example directory")
+type appConfig struct {
+	db *database.Queries
+}
 
-	hashResults, err := md5utils.ParseDirectory("./testing/")
+func main() {
+	fmt.Println("Starting Hashwood REPL input command: ")
+	godotenv.Load()
+
+	dbURL := os.Getenv("DB_URL")
+
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("error connecting to db: %v", err)
 	}
 
-	for _, hash := range hashResults {
-		fmt.Printf("%s - %x\n", hash.Filename, hash.Hash)
+	dbQueries := database.New(db)
+
+	cfg := appConfig{
+		db: dbQueries,
+	}
+
+	for {
+		result := inputoutput.GetInput()
+		if len(result) == 0 {
+			continue
+		} else if result[0] == "scan" {
+			err := cfg.CommandScan(result)
+			if err != nil {
+				log.Fatal(err)
+			}
+		}
 	}
 }
