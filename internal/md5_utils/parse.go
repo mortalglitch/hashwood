@@ -39,3 +39,25 @@ func ParseDirectory(target string) ([]HashData, error) {
 
 	return results, nil
 }
+
+func ParseFile(target string) ([]HashData, error) {
+	file, err := os.Open(target)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	var results []HashData
+
+	h := md5.New()
+	if _, err := io.Copy(h, file); err != nil {
+		return nil, err
+	}
+
+	results = append(results, HashData{
+		Filename: file.Name(),
+		Hash:     h.Sum(nil),
+	})
+
+	return results, nil
+}
