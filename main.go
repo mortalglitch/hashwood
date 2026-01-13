@@ -19,7 +19,7 @@ type appConfig struct {
 }
 
 func main() {
-	fmt.Println("Starting Hashwood REPL input command: ")
+	fmt.Println("Starting Hashwood REPL input command (currently case sensitive): ")
 	godotenv.Load()
 
 	dbURL := os.Getenv("DB_URL")

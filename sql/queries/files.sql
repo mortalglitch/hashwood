@@ -16,7 +16,7 @@ DELETE FROM files;
 
 -- name: GetFileHashByName :one
 SELECT * FROM files
-WHERE hash = $1 LIMIT 1;
+WHERE file_name = $1 AND directory = $2 LIMIT 1;
 
 -- name: UpdateFileChecked :exec
 UPDATE files

@@ -70,11 +70,16 @@ func (q *Queries) DeleteFiles(ctx context.Context) error {
 
 const getFileHashByName = `-- name: GetFileHashByName :one
 SELECT id, file_name, directory, created_at, updated_at, last_change, hash FROM files
-WHERE hash = $1 LIMIT 1
+WHERE file_name = $1 AND directory = $2 LIMIT 1
 `
 
-func (q *Queries) GetFileHashByName(ctx context.Context, hash string) (File, error) {
-	row := q.db.QueryRowContext(ctx, getFileHashByName, hash)
+type GetFileHashByNameParams struct {
+	FileName  string
+	Directory string
+}
+
+func (q *Queries) GetFileHashByName(ctx context.Context, arg GetFileHashByNameParams) (File, error) {
+	row := q.db.QueryRowContext(ctx, getFileHashByName, arg.FileName, arg.Directory)
 	var i File
 	err := row.Scan(
 		&i.ID,
