@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -17,48 +16,51 @@ func (cfg *appConfig) CommandScan(words []string) error {
 		if scanType == "file" {
 			fmt.Println("Add Functionality")
 		} else if scanType == "directory" {
-			result, err := scanDirectory(words, cfg)
+			err := scanDirectory(words, cfg)
 			if err != nil {
 				return err
 			}
-			fmt.Println(result)
 		}
 	}
 
 	return nil
 }
 
-func checkIfExist(filename string, directory string, cfg *appConfig) string {
-	exist, _ := cfg.db.GetFileHashByName(context.Background(), database.GetFileHashByNameParams{
+func checkIfExist(filename string, directory string, cfg *appConfig) (database.File, string) {
+	exist, _ := cfg.db.GetFileByName(context.Background(), database.GetFileByNameParams{
 		FileName:  filename,
 		Directory: directory,
 	})
 
 	if exist == (database.File{}) {
-		return fmt.Sprint("Doesn't Exist")
+		return exist, fmt.Sprint("Doesn't Exist")
+	} else {
+		err := cfg.db.UpdateFileChecked(context.Background(), database.UpdateFileCheckedParams{
+			UpdatedAt: time.Now().UTC(),
+			ID:        exist.ID,
+		})
+		if err != nil {
+			return exist, "Error updating timestamp"
+		}
 	}
-	return fmt.Sprint("Exist")
+	return exist, fmt.Sprint("Exist")
 }
 
 func scanFile() {
-
+	// TODO add single file functionality
 }
 
-func scanDirectory(words []string, cfg *appConfig) (string, error) {
-	var overallResult string
-
-	// Add safety check
+func scanDirectory(words []string, cfg *appConfig) error {
 	targetDirectory := words[2]
 	hashResults, err := md5utils.ParseDirectory(targetDirectory)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	for _, hash := range hashResults {
-		fmt.Printf("%s - %x\n", hash.Filename, hash.Hash)
-		exists := checkIfExist(hash.Filename, targetDirectory, cfg)
+		currentDBEntry, exists := checkIfExist(hash.Filename, targetDirectory, cfg)
 		if exists == "Doesn't Exist" {
-			_, err := cfg.db.CreateFileHash(context.Background(), database.CreateFileHashParams{
+			newEntry, err := cfg.db.CreateFileHash(context.Background(), database.CreateFileHashParams{
 				ID:         uuid.New(),
 				FileName:   hash.Filename,
 				Directory:  targetDirectory,
@@ -67,16 +69,31 @@ func scanDirectory(words []string, cfg *appConfig) (string, error) {
 				LastChange: time.Now().UTC(),
 				Hash:       fmt.Sprintf("%x", hash.Hash),
 			})
-			if err != nil { // This can be fixed up
-				overallResult = "Failed to process"
-				return overallResult, err
+			if err != nil {
+				return err
 			}
-			overallResult = "Successfully added to DB"
+
+			history, err := cfg.db.CreateHistoryEntry(context.Background(), database.CreateHistoryEntryParams{
+				ID:           uuid.New(),
+				PreviousHash: "none",
+				CurrentHash:  newEntry.Hash,
+				DateChange:   time.Now().UTC(),
+				FileID:       newEntry.ID,
+			})
+			if err != nil {
+				return err
+			}
+
+			fmt.Printf("%s - %x added to database and history entry %s\n", hash.Filename, hash.Hash, history.ID)
 		} else {
 			fmt.Println("File already exist and has not been added to the DB")
-			// Need to check if the file exist but the hash is different
+			if currentDBEntry.Hash != fmt.Sprintf("%x", hash.Hash) {
+				fmt.Println("Conflict Detected")
+				err := cfg.ConflictDetected(currentDBEntry, hash)
+				return err
+			}
 		}
 	}
 
-	return overallResult, nil
+	return nil
 }

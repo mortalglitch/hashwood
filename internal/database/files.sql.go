@@ -68,18 +68,18 @@ func (q *Queries) DeleteFiles(ctx context.Context) error {
 	return err
 }
 
-const getFileHashByName = `-- name: GetFileHashByName :one
+const getFileByName = `-- name: GetFileByName :one
 SELECT id, file_name, directory, created_at, updated_at, last_change, hash FROM files
 WHERE file_name = $1 AND directory = $2 LIMIT 1
 `
 
-type GetFileHashByNameParams struct {
+type GetFileByNameParams struct {
 	FileName  string
 	Directory string
 }
 
-func (q *Queries) GetFileHashByName(ctx context.Context, arg GetFileHashByNameParams) (File, error) {
-	row := q.db.QueryRowContext(ctx, getFileHashByName, arg.FileName, arg.Directory)
+func (q *Queries) GetFileByName(ctx context.Context, arg GetFileByNameParams) (File, error) {
+	row := q.db.QueryRowContext(ctx, getFileByName, arg.FileName, arg.Directory)
 	var i File
 	err := row.Scan(
 		&i.ID,
@@ -91,6 +91,18 @@ func (q *Queries) GetFileHashByName(ctx context.Context, arg GetFileHashByNamePa
 		&i.Hash,
 	)
 	return i, err
+}
+
+const getHashByID = `-- name: GetHashByID :one
+SELECT hash FROM files
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetHashByID(ctx context.Context, id uuid.UUID) (string, error) {
+	row := q.db.QueryRowContext(ctx, getHashByID, id)
+	var hash string
+	err := row.Scan(&hash)
+	return hash, err
 }
 
 const updateFileChecked = `-- name: UpdateFileChecked :exec
