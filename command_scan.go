@@ -84,13 +84,14 @@ func scanDirectory(words []string, cfg *appConfig) error {
 				return err
 			}
 
-			fmt.Printf("%s - %x added to database and history entry %s\n", hash.Filename, hash.Hash, history.ID)
+			fmt.Printf("%s - %x added to database: %s\nHistory entry %s\n", hash.Filename, hash.Hash, newEntry.ID, history.ID)
 		} else {
-			fmt.Println("File already exist and has not been added to the DB")
 			if currentDBEntry.Hash != fmt.Sprintf("%x", hash.Hash) {
-				fmt.Println("Conflict Detected")
+				fmt.Printf("Conflict Detected with %s\n", hash.Filename)
 				err := cfg.ConflictDetected(currentDBEntry, hash)
 				return err
+			} else {
+				fmt.Printf("File %s already exist and has not been added to the DB\n", hash.Filename)
 			}
 		}
 	}
