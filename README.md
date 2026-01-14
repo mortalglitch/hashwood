@@ -35,6 +35,9 @@ Currently the .env must share a directory with the main hashwood file.
 - ignore remove ./example/file.txt   - Removes item from ignore list
 - ignore list                        - List all items on the ignore list.
 
+### Reset
+- reset           - resets the full DB
+
 ### Quit
 - quit - exits the program
 

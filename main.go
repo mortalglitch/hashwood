@@ -49,6 +49,11 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+		} else if result[0] == "reset" {
+			err := cfg.CommandReset()
+			if err != nil {
+				log.Fatal(err)
+			}
 		} else if result[0] == "quit" {
 			break
 		}

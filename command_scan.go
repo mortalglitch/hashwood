@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
@@ -51,19 +52,24 @@ func scanFile() {
 }
 
 func scanDirectory(words []string, cfg *appConfig) error {
-	targetDirectory := words[2]
-	hashResults, err := md5utils.ParseDirectory(targetDirectory)
+	directory, err := filepath.Abs(words[2])
+	if err != nil {
+		return err
+	}
+	//directory := filepath.Dir(resolveAbsolute)
+
+	hashResults, err := md5utils.ParseDirectory(directory, cfg.db)
 	if err != nil {
 		return err
 	}
 
 	for _, hash := range hashResults {
-		currentDBEntry, exists := checkIfExist(hash.Filename, targetDirectory, cfg)
+		currentDBEntry, exists := checkIfExist(hash.Filename, directory, cfg)
 		if exists == "Doesn't Exist" {
 			newEntry, err := cfg.db.CreateFileHash(context.Background(), database.CreateFileHashParams{
 				ID:         uuid.New(),
 				FileName:   hash.Filename,
-				Directory:  targetDirectory,
+				Directory:  directory,
 				CreatedAt:  time.Now().UTC(),
 				UpdatedAt:  time.Now().UTC(),
 				LastChange: time.Now().UTC(),
