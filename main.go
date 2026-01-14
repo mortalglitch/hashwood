@@ -44,6 +44,11 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+		} else if result[0] == "ignore" {
+			err := cfg.CommandIgnore(result)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 }

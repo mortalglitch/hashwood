@@ -98,3 +98,25 @@ func (q *Queries) GetIgnoreListByDateAdded(ctx context.Context) ([]Ignorelist, e
 	}
 	return items, nil
 }
+
+const getIgnoredItemByNameDirectory = `-- name: GetIgnoredItemByNameDirectory :one
+SELECT id, file_name, directory, date_added FROM ignorelist
+WHERE file_name = $1 AND directory = $2
+`
+
+type GetIgnoredItemByNameDirectoryParams struct {
+	FileName  string
+	Directory string
+}
+
+func (q *Queries) GetIgnoredItemByNameDirectory(ctx context.Context, arg GetIgnoredItemByNameDirectoryParams) (Ignorelist, error) {
+	row := q.db.QueryRowContext(ctx, getIgnoredItemByNameDirectory, arg.FileName, arg.Directory)
+	var i Ignorelist
+	err := row.Scan(
+		&i.ID,
+		&i.FileName,
+		&i.Directory,
+		&i.DateAdded,
+	)
+	return i, err
+}
