@@ -26,8 +26,15 @@ Currently the .env must share a directory with the main hashwood file.
 
 --------------
 ## Commands
+### Scan
 - scan file - Not Implemented
 - scan directory ./example/    - Scans selected directory showing the hashes and placing them into the db
+
+### Ignore
+- ignore add ./example/file.txt      - Adds the file to the ignore list
+- ignore remove ./example/file.txt   - Removes item from ignore list
+- ignore list                        - List all items on the ignore list.
+
 
 --------------
 ## Setup Process
