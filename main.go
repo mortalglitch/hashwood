@@ -49,6 +49,8 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+		} else if result[0] == "quit" {
+			break
 		}
 	}
 }

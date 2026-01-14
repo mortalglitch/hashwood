@@ -71,7 +71,7 @@ func CheckIfIgnored(target string, directory string, cfg *appConfig) (uuid.UUID,
 	if ignoreEntry == (database.Ignorelist{}) {
 		return uuid.UUID{}, false, nil
 	}
-	fmt.Println("$s was already ignored.\n", ignoreEntry.FileName)
+	fmt.Printf("%s is on the ignore list.\n", ignoreEntry.FileName)
 	return ignoreEntry.ID, true, nil
 }
 
