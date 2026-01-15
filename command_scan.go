@@ -15,7 +15,10 @@ func (cfg *appConfig) CommandScan(words []string) error {
 	if len(words) > 2 {
 		scanType := words[1]
 		if scanType == "file" {
-			fmt.Println("Add Functionality")
+			err := scanFile(words, cfg)
+			if err != nil {
+				return err
+			}
 		} else if scanType == "directory" {
 			err := scanDirectory(words, cfg)
 			if err != nil {
@@ -47,8 +50,26 @@ func checkIfExist(filename string, directory string, cfg *appConfig) database.Fi
 	return exist
 }
 
-func scanFile() {
-	// TODO add single file functionality
+func scanFile(words []string, cfg *appConfig) error {
+	if len(words) > 2 {
+		targetFile, err := filepath.Abs(words[2])
+		if err != nil {
+			return err
+		}
+		directory := filepath.Dir(targetFile)
+
+		hashResults, err := md5utils.ParseFile(targetFile, cfg.db)
+		if err != nil {
+			return err
+		}
+
+		logErr := logHashResults(hashResults, directory, cfg)
+		if logErr != nil {
+			return logErr
+		}
+	}
+
+	return nil
 }
 
 func scanDirectory(words []string, cfg *appConfig) error {
@@ -56,13 +77,21 @@ func scanDirectory(words []string, cfg *appConfig) error {
 	if err != nil {
 		return err
 	}
-	//directory := filepath.Dir(resolveAbsolute)
 
 	hashResults, err := md5utils.ParseDirectory(directory, cfg.db)
 	if err != nil {
 		return err
 	}
 
+	logErr := logHashResults(hashResults, directory, cfg)
+	if logErr != nil {
+		return logErr
+	}
+
+	return nil
+}
+
+func logHashResults(hashResults []md5utils.HashData, directory string, cfg *appConfig) error {
 	for _, hash := range hashResults {
 		currentDBEntry := checkIfExist(hash.Filename, directory, cfg)
 

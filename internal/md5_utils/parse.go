@@ -2,7 +2,6 @@ package md5utils
 
 import (
 	"crypto/md5"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -26,7 +25,6 @@ func ParseDirectory(target string, db *database.Queries) ([]HashData, error) {
 
 	for _, file := range files {
 		targetFile := filepath.Base(file.Name())
-		fmt.Printf("DEBUG FUNCTION --- file '%s' --- Directory %s\n", targetFile, target)
 		_, check, _ := helpers.CheckIfIgnored(targetFile, target, db)
 
 		if check == false {
@@ -51,7 +49,7 @@ func ParseDirectory(target string, db *database.Queries) ([]HashData, error) {
 	return results, nil
 }
 
-func ParseFile(target string) ([]HashData, error) {
+func ParseFile(target string, db *database.Queries) ([]HashData, error) {
 	file, err := os.Open(target)
 	if err != nil {
 		return nil, err
@@ -60,15 +58,20 @@ func ParseFile(target string) ([]HashData, error) {
 
 	var results []HashData
 
-	h := md5.New()
-	if _, err := io.Copy(h, file); err != nil {
-		return nil, err
-	}
+	targetFile := filepath.Base(file.Name())
+	_, check, _ := helpers.CheckIfIgnored(targetFile, target, db)
 
-	results = append(results, HashData{
-		Filename: file.Name(),
-		Hash:     h.Sum(nil),
-	})
+	if check == false {
+		h := md5.New()
+		if _, err := io.Copy(h, file); err != nil {
+			return nil, err
+		}
+
+		results = append(results, HashData{
+			Filename: targetFile,
+			Hash:     h.Sum(nil),
+		})
+	}
 
 	return results, nil
 }
