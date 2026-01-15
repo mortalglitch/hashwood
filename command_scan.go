@@ -27,24 +27,24 @@ func (cfg *appConfig) CommandScan(words []string) error {
 	return nil
 }
 
-func checkIfExist(filename string, directory string, cfg *appConfig) (database.File, string) {
+func checkIfExist(filename string, directory string, cfg *appConfig) database.File {
 	exist, _ := cfg.db.GetFileByName(context.Background(), database.GetFileByNameParams{
 		FileName:  filename,
 		Directory: directory,
 	})
 
 	if exist == (database.File{}) {
-		return exist, fmt.Sprint("Doesn't Exist")
+		return exist
 	} else {
 		err := cfg.db.UpdateFileChecked(context.Background(), database.UpdateFileCheckedParams{
 			UpdatedAt: time.Now().UTC(),
 			ID:        exist.ID,
 		})
 		if err != nil {
-			return exist, "Error updating timestamp"
+			return exist
 		}
 	}
-	return exist, fmt.Sprint("Exist")
+	return exist
 }
 
 func scanFile() {
@@ -64,8 +64,9 @@ func scanDirectory(words []string, cfg *appConfig) error {
 	}
 
 	for _, hash := range hashResults {
-		currentDBEntry, exists := checkIfExist(hash.Filename, directory, cfg)
-		if exists == "Doesn't Exist" {
+		currentDBEntry := checkIfExist(hash.Filename, directory, cfg)
+
+		if currentDBEntry == (database.File{}) {
 			newEntry, err := cfg.db.CreateFileHash(context.Background(), database.CreateFileHashParams{
 				ID:         uuid.New(),
 				FileName:   hash.Filename,

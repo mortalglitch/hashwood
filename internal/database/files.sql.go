@@ -93,6 +93,18 @@ func (q *Queries) GetFileByName(ctx context.Context, arg GetFileByNameParams) (F
 	return i, err
 }
 
+const getFileNameByID = `-- name: GetFileNameByID :one
+SELECT file_name FROM files
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetFileNameByID(ctx context.Context, id uuid.UUID) (string, error) {
+	row := q.db.QueryRowContext(ctx, getFileNameByID, id)
+	var file_name string
+	err := row.Scan(&file_name)
+	return file_name, err
+}
+
 const getHashByID = `-- name: GetHashByID :one
 SELECT hash FROM files
 WHERE id = $1 LIMIT 1
