@@ -1,6 +1,6 @@
 # Hashwood
 
-WIP
+Hashwood is a utility to calculate and store MD5 hashes and log any changes it detects. 
 
 ## Requirements :
 - Go
@@ -48,5 +48,17 @@ Currently the .env must share a directory with the main hashwood file.
 
 --------------
 ## Setup Process
+- With postgres set up a new database
+  - ``` 
+    psql postgres
+    CREATE DATABASE hashwood;
+    ```
+- Setup a .env in the main folder (see above for .env example)
 - goose up from the schema directory
   - goose postgres "postgres://username:password@host:5432/hashwood" up
+- return to main directory
+- Launch using Go
+  - ```
+    go run .
+    ```
+Further build/standalone instructions will be available at a later time.
