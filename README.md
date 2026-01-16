@@ -43,7 +43,8 @@ Currently the .env must share a directory with the main hashwood file.
 - reset           - Resets the entire DB
 
 ### Server WIP
-- server          - Launch the reporting webserver to http://localhost:8080/report
+- server start         - Launch the reporting webserver to http://localhost:8080/report
+- server stop          - Stops the active server
 
 ### Quit
 - quit - exits the program
