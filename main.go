@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 
 	_ "github.com/lib/pq"
 
@@ -66,12 +65,7 @@ func main() {
 				log.Fatal(err)
 			}
 		} else if result[0] == "quit" {
-			// TODO make this cleaner
-			breakCommand := "server stop"
-			err := cfg.CommandServer(strings.Fields(breakCommand))
-			if err != nil {
-				log.Fatal(err)
-			}
+			stopServer()
 			break
 		}
 	}
