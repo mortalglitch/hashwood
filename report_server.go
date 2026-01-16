@@ -15,8 +15,8 @@ func (cfg *appConfig) handlerReports(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprint("<html><body><h1>Hashwood Report</h1><p>Current Information</p>")))
-
+	w.Write([]byte(fmt.Sprint("<html><head><title>Hashwood Report Server</title><style>table, th, td { border:1px solid black;}</style></head><body><h1>Hashwood Report</h1><p>Current Information</p>")))
+	w.Write([]byte(fmt.Sprint("<table><tr><th>File</th><th>Directory</th><th>Current Hash</th><th>Previous Hash</th><th>Date Changed</th></tr>")))
 	for _, item := range historyResults {
 		itemName, err := cfg.db.GetFileNameByID(context.Background(), item.FileID)
 		if err != nil {
@@ -24,10 +24,10 @@ func (cfg *appConfig) handlerReports(w http.ResponseWriter, r *http.Request) {
 		}
 
 		itemDirectory, err := cfg.db.GetFileDirectoryByID(context.Background(), item.FileID)
-		w.Write([]byte(fmt.Sprintf("<p>File: %s Directory: %s Current Hash: %s Previous Hash: %s Last Change Detected: %s", itemName, itemDirectory, item.CurrentHash, item.PreviousHash, item.DateChange.String())))
+		w.Write([]byte(fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", itemName, itemDirectory, item.CurrentHash, item.PreviousHash, item.DateChange.String())))
 	}
 
-	w.Write([]byte(fmt.Sprint("</body></html>")))
+	w.Write([]byte(fmt.Sprint("</table></body></html>")))
 }
 
 // Need to add a shutdown function.

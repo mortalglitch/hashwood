@@ -40,10 +40,10 @@ Currently the .env must share a directory with the main hashwood file.
 - ignore list                        - List all items on the ignore list.
 
 ### Reset
-- reset           - resets the full DB
+- reset           - Resets the entire DB
 
 ### Server WIP
-- server          - Launched the reporting webserver to http://localhost:8080/report
+- server          - Launch the reporting webserver to http://localhost:8080/report
 
 ### Quit
 - quit - exits the program
