@@ -93,6 +93,18 @@ func (q *Queries) GetFileByName(ctx context.Context, arg GetFileByNameParams) (F
 	return i, err
 }
 
+const getFileDirectoryByID = `-- name: GetFileDirectoryByID :one
+SELECT directory FROM files
+WHERE id = $1 LIMIT 1
+`
+
+func (q *Queries) GetFileDirectoryByID(ctx context.Context, id uuid.UUID) (string, error) {
+	row := q.db.QueryRowContext(ctx, getFileDirectoryByID, id)
+	var directory string
+	err := row.Scan(&directory)
+	return directory, err
+}
+
 const getFileNameByID = `-- name: GetFileNameByID :one
 SELECT file_name FROM files
 WHERE id = $1 LIMIT 1

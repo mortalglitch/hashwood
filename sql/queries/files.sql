@@ -18,6 +18,10 @@ DELETE FROM files;
 SELECT * FROM files
 WHERE file_name = $1 AND directory = $2 LIMIT 1;
 
+-- name: GetFileDirectoryByID :one
+SELECT directory FROM files
+WHERE id = $1 LIMIT 1;
+
 -- name: GetFileNameByID :one
 SELECT file_name FROM files
 WHERE id = $1 LIMIT 1;
