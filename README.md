@@ -1,20 +1,16 @@
 # Hashwood
 
 Hashwood is a utility to calculate and store MD5 hashes and log any changes it detects. 
+It can be used to launch a local web server which will display the history and changes 
+to the hash of specified files.
+
 
 ## Requirements :
 - Go
 - Postgres
 - Goose
   - Used to "goose up" and build the tables within the db and perform edits. 
-- Go's UUID system
-  - More info to come. It may be dropped.
 - SQLC for quick Go SQL functions.
-WIP
-
---------------
-## How to launch
-WIP
 
 --------------
 ## .env Example
@@ -29,6 +25,9 @@ Currently the .env must share a directory with the main hashwood file.
 ### Scan
 - scan file ./example/file.png - Scans a single file and adding it into the database if it does not exist
 - scan directory ./example/    - Scans selected directory showing the hashes and placing them into the db
+
+### Help
+- help     - Prints a list of commands and their functionality.
 
 ### History
 - history - List all current history entries

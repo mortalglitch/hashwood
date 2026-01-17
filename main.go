@@ -19,7 +19,8 @@ type appConfig struct {
 }
 
 func main() {
-	fmt.Println("Starting Hashwood REPL input command (currently case sensitive): ")
+	fmt.Println("Starting Hashwood")
+	fmt.Println("Use help for information about available commands.")
 	godotenv.Load()
 
 	dbURL := os.Getenv("DB_URL")
@@ -37,6 +38,7 @@ func main() {
 
 	for {
 		result := inputoutput.GetInput()
+
 		if len(result) == 0 {
 			continue
 		} else if result[0] == "scan" {
@@ -44,6 +46,8 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+		} else if result[0] == "help" {
+			inputoutput.PrintHelp()
 		} else if result[0] == "history" {
 			err := cfg.CommandHistory(result)
 			if err != nil {
@@ -65,7 +69,9 @@ func main() {
 				log.Fatal(err)
 			}
 		} else if result[0] == "quit" {
-			stopServer()
+			if activeServer != nil {
+				stopServer()
+			}
 			break
 		}
 	}
