@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/mortalglitch/hashwood/internal/helpers"
 )
 
 var activeServer *http.Server
@@ -17,8 +19,9 @@ func (cfg *appConfig) handlerReports(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(fmt.Sprint("<html><head><title>Hashwood Report Server</title><style>table, th, td { border:1px solid black;}</style></head><body><h1>Hashwood Report</h1><p>Current Information</p>")))
-	w.Write([]byte(fmt.Sprint("<table><tr><th>File</th><th>Directory</th><th>Current Hash</th><th>Previous Hash</th><th>Date Changed</th></tr>")))
+	w.Write([]byte(`<html><head><title>Hashwood Report Server</title><meta http-equiv="refresh" content="60"/><style>table, th, td { border:1px solid black;}</style></head>
+		<body><h1>Hashwood Report</h1><p>Current Information(changes and todays events highlighted in yellow)</p>`))
+	w.Write([]byte("<table><tr><th>File</th><th>Directory</th><th>Current Hash</th><th>Previous Hash</th><th>Date Changed</th></tr>"))
 	for _, item := range historyResults {
 		itemName, err := cfg.db.GetFileNameByID(context.Background(), item.FileID)
 		if err != nil {
@@ -26,13 +29,25 @@ func (cfg *appConfig) handlerReports(w http.ResponseWriter, r *http.Request) {
 		}
 
 		itemDirectory, err := cfg.db.GetFileDirectoryByID(context.Background(), item.FileID)
-		w.Write([]byte(fmt.Sprintf("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>", itemName, itemDirectory, item.CurrentHash, item.PreviousHash, item.DateChange.String())))
+		isToday := helpers.CheckIfToday(item.DateChange)
+
+		var htmlCurrentHash string
+		if item.PreviousHash != "none" {
+			htmlCurrentHash = fmt.Sprintf(`<td style="background-color: yellow;">%s</td>`, item.CurrentHash)
+		} else {
+			htmlCurrentHash = fmt.Sprintf(`<td>%s</td>`, item.CurrentHash)
+		}
+		// Cleanup note: This could be cleaned up with a different type of builder vs doing it all at once.
+		if isToday {
+			w.Write([]byte(fmt.Sprintf(`<tr><td>%s</td><td>%s</td>%s<td>%s</td><td style="background-color: yellow;">%s</td></tr>`, itemName, itemDirectory, htmlCurrentHash, item.PreviousHash, item.DateChange.String())))
+		} else {
+			w.Write([]byte(fmt.Sprintf(`<tr><td>%s</td><td>%s</td>%s<td>%s</td><td>%s</td></tr>`, itemName, itemDirectory, htmlCurrentHash, item.PreviousHash, item.DateChange.String())))
+		}
 	}
 
-	w.Write([]byte(fmt.Sprint("</table></body></html>")))
+	w.Write([]byte("</table></body></html>"))
 }
 
-// Need to add a shutdown function.
 func (cfg *appConfig) CommandServer(words []string) error {
 	const filepathRoot = "."
 	const port = "8080"
