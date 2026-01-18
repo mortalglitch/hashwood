@@ -26,6 +26,10 @@ Currently the .env must share a directory with the main hashwood file.
 - scan file ./example/file.png - Scans a single file and adding it into the database if it does not exist
 - scan directory ./example/    - Scans selected directory showing the hashes and placing them into the db
 
+### Autoscan
+- autoscan start 60 ./example/    - Scans the target directory "./example/" every 60 seconds
+- autoscan stop ./example/        - If an ./example/ scan is running this will stop it.
+
 ### Help
 - help     - Prints a list of commands and their functionality.
 
@@ -41,7 +45,7 @@ Currently the .env must share a directory with the main hashwood file.
 ### Reset
 - reset           - Resets the entire DB
 
-### Server WIP
+### Server
 - server start         - Launch the reporting webserver to http://localhost:8080/report
 - server stop          - Stops the active server
 

@@ -20,7 +20,8 @@ func (cfg *appConfig) CommandScan(words []string) error {
 				return err
 			}
 		} else if scanType == "directory" {
-			err := scanDirectory(words, cfg)
+			targetDirectory := words[2]
+			err := scanDirectory(targetDirectory, cfg)
 			if err != nil {
 				return err
 			}
@@ -72,8 +73,8 @@ func scanFile(words []string, cfg *appConfig) error {
 	return nil
 }
 
-func scanDirectory(words []string, cfg *appConfig) error {
-	directory, err := filepath.Abs(words[2])
+func scanDirectory(targetDirectory string, cfg *appConfig) error {
+	directory, err := filepath.Abs(targetDirectory)
 	if err != nil {
 		return err
 	}
@@ -128,11 +129,12 @@ func logHashResults(hashResults []md5utils.HashData, directory string, cfg *appC
 				if err != nil {
 					return err
 				}
-			} else {
-				fmt.Printf("File %s already exist and has not been added to the DB\n", hash.Filename)
-			}
+			} //else {  // Commented out to prevent Spam on large file sets.
+			//fmt.Printf("File %s already exist and has not been added to the DB\n", hash.Filename)
+			//}
 		}
 	}
+	fmt.Println("Scan complete.")
 
 	return nil
 }

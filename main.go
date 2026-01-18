@@ -36,6 +36,8 @@ func main() {
 		db: dbQueries,
 	}
 
+	asm := NewAutoScanManager()
+
 	for {
 		result := inputoutput.GetInput()
 
@@ -48,6 +50,8 @@ func main() {
 			}
 		} else if result[0] == "help" {
 			inputoutput.PrintHelp()
+		} else if result[0] == "autoscan" {
+			asm.CommandAutoScan(result, &cfg)
 		} else if result[0] == "history" {
 			err := cfg.CommandHistory(result)
 			if err != nil {
