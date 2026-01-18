@@ -9,6 +9,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/mortalglitch/hashwood/internal/database"
 	"github.com/mortalglitch/hashwood/internal/helpers"
+	inputoutput "github.com/mortalglitch/hashwood/internal/input_output"
 )
 
 func (cfg *appConfig) CommandIgnore(words []string) error {
@@ -35,7 +36,11 @@ func (cfg *appConfig) CommandIgnore(words []string) error {
 				if err != nil {
 					return err
 				}
+			} else {
+				inputoutput.PrintIgnore()
 			}
+		} else {
+			inputoutput.PrintIgnore()
 		}
 
 		if action == "list" {
@@ -45,7 +50,9 @@ func (cfg *appConfig) CommandIgnore(words []string) error {
 			}
 		}
 
-	} // else show usage
+	} else {
+		inputoutput.PrintIgnore()
+	}
 
 	return nil
 }

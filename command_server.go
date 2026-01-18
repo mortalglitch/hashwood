@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/mortalglitch/hashwood/internal/helpers"
+	inputoutput "github.com/mortalglitch/hashwood/internal/input_output"
 )
 
 var activeServer *http.Server
@@ -76,6 +77,8 @@ func (cfg *appConfig) CommandServer(words []string) error {
 			}()
 		} else if command == "stop" {
 			stopServer()
+		} else {
+			inputoutput.PrintServer()
 		}
 	}
 

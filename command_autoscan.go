@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	inputoutput "github.com/mortalglitch/hashwood/internal/input_output"
 )
 
 type AutoScanManager struct {
@@ -92,6 +94,8 @@ func (asm *AutoScanManager) CommandAutoScan(words []string, cfg *appConfig) {
 			} else {
 				fmt.Printf("No scans found for %s\n", targetDirectory)
 			}
+		} else {
+			inputoutput.PrintAutoScan()
 		}
 		return
 	}

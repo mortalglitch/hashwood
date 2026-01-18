@@ -5,12 +5,11 @@ It can be used to launch a local web server which will display the history and c
 to the hash of specified files.
 
 
-## Requirements :
+## Requirements for setup :
 - Go
 - Postgres
 - Goose
   - Used to "goose up" and build the tables within the db and perform edits. 
-- SQLC for quick Go SQL functions.
 
 --------------
 ## .env Example
@@ -25,6 +24,7 @@ Currently the .env must share a directory with the main hashwood file.
 ### Scan
 - scan file ./example/file.png - Scans a single file and adding it into the database if it does not exist
 - scan directory ./example/    - Scans selected directory showing the hashes and placing them into the db
+  - Note: Sub directories of the target directory will be skipped.
 
 ### Autoscan
 - autoscan start 60 ./example/    - Scans the target directory "./example/" every 60 seconds
@@ -50,7 +50,7 @@ Currently the .env must share a directory with the main hashwood file.
 - server stop          - Stops the active server
 
 ### Quit
-- quit - exits the program
+- quit or exit - exits the program
 
 
 --------------

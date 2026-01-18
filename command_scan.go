@@ -8,11 +8,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/mortalglitch/hashwood/internal/database"
+	inputoutput "github.com/mortalglitch/hashwood/internal/input_output"
 	md5utils "github.com/mortalglitch/hashwood/internal/md5_utils"
 )
 
 func (cfg *appConfig) CommandScan(words []string) error {
-	if len(words) > 2 {
+	if len(words) == 3 {
 		scanType := words[1]
 		if scanType == "file" {
 			err := scanFile(words, cfg)
@@ -25,7 +26,11 @@ func (cfg *appConfig) CommandScan(words []string) error {
 			if err != nil {
 				return err
 			}
+		} else {
+			inputoutput.PrintScan()
 		}
+	} else {
+		inputoutput.PrintScan()
 	}
 
 	return nil
@@ -52,7 +57,7 @@ func checkIfExist(filename string, directory string, cfg *appConfig) database.Fi
 }
 
 func scanFile(words []string, cfg *appConfig) error {
-	if len(words) > 2 {
+	if len(words) == 2 {
 		targetFile, err := filepath.Abs(words[2])
 		if err != nil {
 			return err

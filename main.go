@@ -20,7 +20,7 @@ type appConfig struct {
 
 func main() {
 	fmt.Println("Starting Hashwood")
-	fmt.Println("Use help for information about available commands.")
+	fmt.Println("Use 'help' for information about available commands.")
 	godotenv.Load()
 
 	dbURL := os.Getenv("DB_URL")
@@ -72,7 +72,7 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-		} else if result[0] == "quit" {
+		} else if result[0] == "quit" || result[0] == "exit" {
 			if activeServer != nil {
 				stopServer()
 			}
