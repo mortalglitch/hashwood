@@ -2,6 +2,7 @@ package md5utils
 
 import (
 	"crypto/md5"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -27,22 +28,31 @@ func ParseDirectory(target string, db *database.Queries) ([]HashData, error) {
 		targetFile := filepath.Base(file.Name())
 		_, check, _ := helpers.CheckIfIgnored(targetFile, target, db)
 
-		if check == false {
-			f, err := os.Open(target + "/" + file.Name())
-			if err != nil {
-				return nil, err
-			}
-			defer f.Close()
+		info, err := os.Stat(target + "/" + file.Name())
+		if err != nil {
+			return nil, err
+		}
 
-			h := md5.New()
-			if _, err := io.Copy(h, f); err != nil {
-				return nil, err
-			}
+		if info.IsDir() {
+			fmt.Printf("Found directory %s skipping", file.Name())
+		} else {
+			if check == false {
+				f, err := os.Open(target + "/" + file.Name())
+				if err != nil {
+					return nil, err
+				}
+				defer f.Close()
 
-			results = append(results, HashData{
-				Filename: targetFile,
-				Hash:     h.Sum(nil),
-			})
+				h := md5.New()
+				if _, err := io.Copy(h, f); err != nil {
+					return nil, err
+				}
+
+				results = append(results, HashData{
+					Filename: targetFile,
+					Hash:     h.Sum(nil),
+				})
+			}
 		}
 	}
 
