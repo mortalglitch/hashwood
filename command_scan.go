@@ -134,7 +134,7 @@ func logHashResults(hashResults []md5utils.HashData, directory string, cfg *appC
 			//}
 		}
 	}
-	fmt.Println("Scan complete.")
+	fmt.Println("\nScan complete.")
 
 	return nil
 }

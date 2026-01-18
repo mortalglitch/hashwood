@@ -59,15 +59,16 @@ func (asm *AutoScanManager) CommandAutoScan(words []string, cfg *appConfig) {
 				asm.mu.Unlock()
 			}()
 
-			fmt.Printf("Starting autoscan on %s every %s seconds\n> ", targetDirectory, selectedTime)
+			fmt.Printf("Starting autoscan on %s every %s seconds\n", targetDirectory, selectedTime)
 
 			for {
 				select {
 				case <-ctx.Done():
-					fmt.Printf("Stopping scan on %s...\n> ", targetDirectory)
+					fmt.Printf("Stopping scan on %s...\n", targetDirectory)
 					return
 				case <-ticker.C:
 					scanDirectory(targetDirectory, cfg)
+					fmt.Print("> ")
 				}
 			}
 		}(ctx)
