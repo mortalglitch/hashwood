@@ -4,6 +4,10 @@ Hashwood is a utility to calculate and store MD5 hashes and log any changes it d
 It can be used to launch a local web server which will display the history and changes 
 to the hash of specified files.
 
+## Why
+When working with updates for various application it's often times difficult to find what files have changed.
+I made Hashwood to help keep track of changes and highlight when something has been modified to quickly identify
+potential faults or malicious changes. 
 
 ## Requirements for setup :
 - Go
