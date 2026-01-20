@@ -4,7 +4,7 @@ Hashwood is a utility to calculate and store MD5 hashes and log any changes it d
 It can be used to launch a local web server which will display the history and changes 
 to the hash of specified files.
 
-## Why
+## Motivation
 When working with updates for various application it's often times difficult to find what files have changed.
 I made Hashwood to help keep track of changes and highlight when something has been modified to quickly identify
 potential faults or malicious changes. 
@@ -16,6 +16,26 @@ potential faults or malicious changes.
   - Used to "goose up" and build the tables within the db and perform edits. 
 
 --------------
+## Quick Start
+- Install the project with Go
+  - ```
+    go install github.com/mortalglitch/hashwood
+    ```
+- With postgres set up a new database
+  - ``` 
+    psql postgres
+    CREATE DATABASE hashwood;
+    ```
+- Setup a .env in the main folder (see below for .env example)
+- goose up from the schema directory
+  - goose postgres "postgres://username:password@host:5432/hashwood" up
+- return to main directory
+- Launch using Go
+  - ```
+    go run .
+    ```
+
+--------------
 ## .env Example
 Currently the .env must share a directory with the main hashwood file.
 
@@ -24,7 +44,7 @@ Currently the .env must share a directory with the main hashwood file.
  ```
 
 --------------
-## Commands
+## Usage
 ### Scan
 - scan file ./example/file.png - Scans a single file and adding it into the database if it does not exist
 - scan directory ./example/    - Scans selected directory showing the hashes and placing them into the db
@@ -55,21 +75,10 @@ Currently the .env must share a directory with the main hashwood file.
 
 ### Quit
 - quit or exit - exits the program
-
-
 --------------
-## Setup Process
-- With postgres set up a new database
-  - ``` 
-    psql postgres
-    CREATE DATABASE hashwood;
-    ```
-- Setup a .env in the main folder (see above for .env example)
-- goose up from the schema directory
-  - goose postgres "postgres://username:password@host:5432/hashwood" up
-- return to main directory
-- Launch using Go
-  - ```
-    go run .
-    ```
-Further build/standalone instructions will be available at a later time.
+
+## 🤝 Contributing
+
+### Submit a pull request
+
+If you'd like to contribute, please fork the repository and open a pull request to the `main` branch.
